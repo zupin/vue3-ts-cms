@@ -4,7 +4,7 @@ import 'normalize.css'
 import './assets/css/index.less'
 
 // import './service/axios_demo'
-import hyRequest from './service'
+// import hyRequest from './service'
 
 // element-plus 全局引入
 /* import ElementPlus from 'element-plus'
@@ -14,6 +14,7 @@ import App from './App.vue'
 
 import router from './router'
 import store from './store'
+import { setupStore } from './store'
 
 const app = createApp(App)
 
@@ -36,13 +37,14 @@ app.use(globalRegister)
 app.use(router)
 app.use(store)
 // app.use(ElementPlus)
+setupStore()
 app.mount('#app')
 
 // console.log(BASE_URL)
 // console.log(VUE_APP_BASE_URL)
 // console.log(process.env)
-console.log(process.env.VUE_APP_BASE_URL)
-console.log(process.env.VUE_APP_BASE_NAME)
+// console.log(process.env.VUE_APP_BASE_URL)
+// console.log(process.env.VUE_APP_BASE_NAME)
 
 /* hyRequest.request({
   url: '/home/multidata',
@@ -59,11 +61,11 @@ console.log(process.env.VUE_APP_BASE_NAME)
   }
 }) */
 
-interface DataType {
+/* interface DataType {
   data: any
   returnCode: string
   success: boolean
-}
+} */
 
 /* hyRequest
   .request<DataType>({
@@ -77,16 +79,17 @@ interface DataType {
     console.log(res.success)
   }) */
 
-hyRequest
+/* hyRequest
   .get<DataType>({
     url: '/home/multidata',
     // showLoading: true
     showLoading: false
   })
-  .then((res) => {
-    console.log(res.data)
-    console.log(res.returnCode)
-    console.log(res.success)
-  })
+  // .then((res) => {
+  .then(() => {
+    // console.log(res.data)
+    // console.log(res.returnCode)
+    // console.log(res.success)
+  }) */
 
 // hyRequest.get()
