@@ -10,11 +10,19 @@ const routes: RouteRecordRaw[] = [
   },
   {
     path: '/login',
+    name: 'login',
     component: () => import('@/views/login/login.vue')
   },
   {
     path: '/main',
+    name: 'main',
     component: () => import('@/views/main/main.vue')
+    // children: [] -> 不能写死，根据userMenus来决定children
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found',
+    component: () => import('@/views/not-found/not-found.vue')
   }
 ]
 
@@ -23,6 +31,7 @@ const router = createRouter({
   history: createWebHashHistory()
 })
 
+// 导航守卫（动态路由可以在导航守卫中添加使用）
 router.beforeEach((to) => {
   if (to.path !== '/login') {
     // 不是登录界面
