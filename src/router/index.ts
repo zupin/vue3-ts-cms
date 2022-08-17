@@ -1,6 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
+import { mapMenusToRoutes } from '@/utils/map-menus'
+import store from '@/store'
+
 import localCache from '@/utils/cache'
 
 const routes: RouteRecordRaw[] = [
@@ -39,6 +42,22 @@ router.beforeEach((to) => {
     if (!token) {
       return '/login'
     }
+
+    // console.log(router.getRoutes())
+
+    const userMenus = (store.state as any).login.userMenus
+
+    // userMenus =>（映射到）routes 中
+    const routes = mapMenusToRoutes(userMenus)
+    // console.log(routes) // [{path: '/main/analysis/overview', name: 'overview', children: Array(0), component: ƒ}, {path: '/main/analysis/dashboard', name: 'dashboard', children: Array(0), component: ƒ} length: 10]
+
+    console.log('changeUserMenus')
+
+    // 将 routes => （添加到） router.main.children中
+    // addRoute(parentName: string | symbol, route: RouteRecordRaw): () => void   parentName: 父路由记录，route 应该被添加到的位置  route: 要添加的路由记录
+    routes.forEach((route) => {
+      router.addRoute('main', route)
+    })
   }
 })
 
