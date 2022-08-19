@@ -6,7 +6,7 @@ import {
   requestUserMenuByRoleId
 } from '@/service/login/login'
 import localCache from '@/utils/cache'
-// import { mapMenusToRoutes } from '@/utils/map-menus'
+import { mapMenusToRoutes } from '@/utils/map-menus'
 import router from '@/router'
 
 import { ILoginState } from './types'
@@ -34,7 +34,7 @@ const loginModule: Module<ILoginState, IRootState> = {
     changeUserMenus(state, userMenus: any) {
       state.userMenus = userMenus
 
-      /* // userMenus =>（映射到）routes 中
+      // userMenus =>（映射到）routes 中
       const routes = mapMenusToRoutes(userMenus)
       // console.log(routes) // [{path: '/main/analysis/overview', name: 'overview', children: Array(0), component: ƒ}, {path: '/main/analysis/dashboard', name: 'dashboard', children: Array(0), component: ƒ} length: 10]
 
@@ -44,7 +44,7 @@ const loginModule: Module<ILoginState, IRootState> = {
       // addRoute(parentName: string | symbol, route: RouteRecordRaw): () => void   parentName: 父路由记录，route 应该被添加到的位置  route: 要添加的路由记录
       routes.forEach((route) => {
         router.addRoute('main', route)
-      }) */
+      })
     }
   },
   actions: {

@@ -1,8 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 
-import { mapMenusToRoutes } from '@/utils/map-menus'
-import store from '@/store'
+import { firstMenu } from '@/utils/map-menus'
+
+// import { mapMenusToRoutes } from '@/utils/map-menus'
+// import store from '@/store'
 
 import localCache from '@/utils/cache'
 
@@ -44,8 +46,9 @@ router.beforeEach((to) => {
     }
 
     // console.log(router.getRoutes())
+    // console.log(to) // to: 要跳转的route对象 {fullPath: '/main/system/user', hash: '', query: {…}, name: 'user', path: '/main/system/user',…} ->  {fullPath: '/main/system/user', path: '/main/system/user', query: {…}, hash: '', name: 'not-found',…}
 
-    const userMenus = (store.state as any).login.userMenus
+    /* const userMenus = (store.state as any).login.userMenus
 
     // userMenus =>（映射到）routes 中
     const routes = mapMenusToRoutes(userMenus)
@@ -57,7 +60,11 @@ router.beforeEach((to) => {
     // addRoute(parentName: string | symbol, route: RouteRecordRaw): () => void   parentName: 父路由记录，route 应该被添加到的位置  route: 要添加的路由记录
     routes.forEach((route) => {
       router.addRoute('main', route)
-    })
+    }) */
+
+    if (to.path === '/main') {
+      return firstMenu.url
+    }
   }
 })
 
