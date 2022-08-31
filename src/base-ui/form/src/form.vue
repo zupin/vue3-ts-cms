@@ -59,7 +59,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch } from 'vue'
+import { defineComponent, PropType, ref, watch, computed } from 'vue'
+// import { defineComponent, PropType, watch, computed } from 'vue'
 
 import type { IFormItem } from '../types'
 
@@ -105,8 +106,26 @@ export default defineComponent({
         emit('update:modelValue', newValue)
       }
     }) */
-
+    // 改了modelValue数据，formData没有变化
+    // const formData = ref({ ...props.modelValue })
+    // const formData = computed(() => ({ ...props.modelValue }))
+    /* const formData = computed({
+      get: () => ({ ...props.modelValue }),
+      set: (newValue) => {
+        console.log(newValue)
+      }
+    }) */
     const formData = ref({ ...props.modelValue })
+    /* watch(props.modelValue, (newValue) => {
+      console.log(newValue)
+    }) */
+    watch(
+      () => props.modelValue,
+      (newValue) => {
+        // console.log(newValue)
+        formData.value = { newValue }
+      }
+    )
 
     watch(
       formData,

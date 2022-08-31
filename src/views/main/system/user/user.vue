@@ -35,41 +35,83 @@
       </el-table>
     </div> -->
 
-    <div class="content">
-      <hy-table :listdata="userList" :propList="propList">
+    <!-- hy-table注释 -->
+    <!-- <div class="content"> -->
+    <!-- <hy-table
+        :listData="userList"
+        :propList="propList"
+        :showIndexColumn="showIndexColumn"
+        :showSelectColumn="showSelectColumn"
+        @selectionChange="selectionChange"
+        :title="title"
+      > -->
+
+    <!-- <hy-table
+        :listData="userList"
+        v-bind="contentTableConfig"
+        @selectionChange="selectionChange"
+      >
+        <template #headerHandler>
+          <el-button type="primary" size="medium">新建用户</el-button>
+        </template>
         <template #status="scope">
-          <el-button>{{ scope.row.enable ? '禁用' : '启用' }}</el-button>
+          <el-button
+            size="mini"
+            plain
+            :type="scope.row.enable ? 'success' : 'danger'"
+          >
+            {{ scope.row.enable ? '禁用' : '启用' }}
+          </el-button>
         </template>
         <template #createAt="scope">
-          <strong>{{ scope.row.createAt }}</strong>
+          <span>{{ $filters.formatTime(scope.row.createAt) }}</span>
         </template>
         <template #updateAt="scope">
-          <strong>{{ scope.row.updateAt }}</strong>
+          <span>{{ $filters.formatTime(scope.row.updateAt) }}</span>
         </template>
-      </hy-table>
-    </div>
+        <template #handler>
+          <div class="handler-btns">
+            <el-button icon="el-icon-edit" size="mini" type="text">
+              编辑
+            </el-button>
+            <el-button icon="el-icon-delete" size="mini" type="text">
+              删除
+            </el-button>
+          </div>
+        </template>
+      </hy-table> -->
+    <!-- </div> -->
+    <!-- hy-table注释 -->
+    <page-content
+      :contentTableConfig="contentTableConfig"
+      pageName="users"
+    ></page-content>
   </div>
 </template>
 
 <script lang="ts">
 // import { defineComponent, ref } from 'vue'
-import { defineComponent, computed } from 'vue'
-import { useStore } from '@/store'
+/* import { defineComponent, computed } from 'vue'
+import { useStore } from '@/store' */
+import { defineComponent } from 'vue'
 
 // import HyForm, { IFormItem, IForm } from '@/base-ui/form'
 // import HyForm from '@/base-ui/form'
 
 import PageSearch from '@/components/page-search'
-import HyTable from '@/base-ui/table'
+// import HyTable from '@/base-ui/table'
+import PageContent from '@/components/page-content'
 
 import { searchFormConfig } from './config/search.config'
+import { contentTableConfig } from './config/content.config'
 
 export default defineComponent({
   name: 'user',
   components: {
     // HyForm,
     PageSearch,
-    HyTable
+    // HyTable,
+    PageContent
   },
   setup() {
     /* const formItems: IFormItem[] = [
@@ -131,7 +173,7 @@ export default defineComponent({
       createTime: ''
     }) */
 
-    const store = useStore()
+    /* const store = useStore()
     store.dispatch('system/getPageListAction', {
       pageUrl: '/users/list',
       queryInfo: {
@@ -140,28 +182,12 @@ export default defineComponent({
       }
     })
 
-    const userList = computed(() => store.state.system.userList)
-    const userCount = computed(() => store.state.system.userCount)
+    const userList = computed(() => store.state.system.userList) */
+    // const userCount = computed(() => store.state.system.userCount)
 
-    // ElTable配置
-    const propList = [
-      { prop: 'name', label: '用户名', minWidth: '100' },
-      { prop: 'realname', label: '真实姓名', minWidth: '100' },
-      { prop: 'cellphone', label: '手机号码', minWidth: '100' },
-      { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
-      {
-        prop: 'createAt',
-        label: '创建时间',
-        minWidth: '250',
-        slotName: 'createAt'
-      },
-      {
-        prop: 'updateAt',
-        label: '更新时间',
-        minWidth: '250',
-        slotName: 'updateAt'
-      }
-    ]
+    /* const selectionChange = (value: any) => {
+      console.log(value)
+    } */
 
     return {
       // formItems,
@@ -170,16 +196,21 @@ export default defineComponent({
       // colLayout,
       searchFormConfig,
       // formData,
-      userList,
-      propList
+      // userList,
+      // propList,
+      // showIndexColumn,
+      // showSelectColumn,
+      // title
+      // selectionChange,
+      contentTableConfig
     }
   }
 })
 </script>
 
 <style scoped lang="less">
-.content {
+/* .content {
   padding: 20px;
   border-top: 20px solid #f5f5f5;
-}
+} */
 </style>
