@@ -17,18 +17,31 @@
               <template
                 v-if="item.type === 'input' || item.type === 'password'"
               >
-                <el-input
+                <!-- <el-input
                   :placeholder="item.placeholder"
                   :show-password="item.type === 'password'"
                   v-bind="item.otherOptions"
                   v-model="formData[`${item.field}`]"
+                /> -->
+                <el-input
+                  :placeholder="item.placeholder"
+                  :show-password="item.type === 'password'"
+                  v-bind="item.otherOptions"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 />
               </template>
               <template v-else-if="item.type === 'select'">
-                <el-select
+                <!-- <el-select
                   :placeholder="item.placeholder"
                   style="width: 100%"
                   v-model="formData[`${item.field}`]"
+                > -->
+                <el-select
+                  :placeholder="item.placeholder"
+                  style="width: 100%"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 >
                   <el-option
                     v-for="option in item.options"
@@ -41,10 +54,16 @@
                 </el-select>
               </template>
               <template v-else-if="item.type === 'datepicker'">
-                <el-date-picker
+                <!-- <el-date-picker
                   v-bind="item.otherOptions"
                   style="width: 100%"
                   v-model="formData[`${item.field}`]"
+                ></el-date-picker> -->
+                <el-date-picker
+                  v-bind="item.otherOptions"
+                  style="width: 100%"
+                  :model-value="modelValue[`${item.field}`]"
+                  @update:modelValue="handleValueChange($event, item.field)"
                 ></el-date-picker>
               </template>
             </el-form-item>
@@ -59,7 +78,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref, watch, computed } from 'vue'
+// import { defineComponent, PropType, ref, watch } from 'vue'
+import { defineComponent, PropType } from 'vue'
 // import { defineComponent, PropType, watch, computed } from 'vue'
 
 import type { IFormItem } from '../types'
@@ -115,17 +135,21 @@ export default defineComponent({
         console.log(newValue)
       }
     }) */
-    const formData = ref({ ...props.modelValue })
+    // const formData = ref({ ...props.modelValue })
     /* watch(props.modelValue, (newValue) => {
       console.log(newValue)
     }) */
-    watch(
+
+    /* watch(
       () => props.modelValue,
       (newValue) => {
         // console.log(newValue)
         formData.value = { newValue }
       }
-    )
+    ) */
+
+    // 使用双向绑定
+    /* const formData = ref({ ...props.modelValue })
 
     watch(
       formData,
@@ -136,10 +160,18 @@ export default defineComponent({
       {
         deep: true
       }
-    )
+    ) */
+
+    // 不使用双向绑定
+    // :model-value="modelValue[`${item.field}`]"
+    // @update:modelValue="handleValueChange($event, item.field)"
+    const handleValueChange = (value: any, field: string) => {
+      emit('update:modelValue', { ...props.modelValue, [field]: value })
+    }
 
     return {
-      formData
+      // formData
+      handleValueChange
     }
   }
 })

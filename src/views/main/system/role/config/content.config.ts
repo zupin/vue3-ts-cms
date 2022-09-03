@@ -1,5 +1,5 @@
 export const contentTableConfig = {
-  title: '用户列表',
+  title: '角色管理',
   // ElTable配置
   propList: [
     { prop: 'name', label: '角色名', minWidth: '100' },

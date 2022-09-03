@@ -20,7 +20,11 @@
         </div>
       </template>
     </hy-form> -->
-    <page-search :searchFormConfig="searchFormConfig" />
+    <page-search
+      :searchFormConfig="searchFormConfig"
+      @resetBtnClick="handleResetClick"
+      @queryBtnClick="handleQueryClick"
+    />
 
     <!-- <el-table :data="userList" border style="width: 100%">
       <el-table-column prop="name" label="用户名" min-width="180" />
@@ -83,6 +87,7 @@
     <!-- </div> -->
     <!-- hy-table注释 -->
     <page-content
+      ref="pageContentRef"
       :contentTableConfig="contentTableConfig"
       pageName="users"
     ></page-content>
@@ -104,6 +109,8 @@ import PageContent from '@/components/page-content'
 
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
+
+import { usePageSearch } from '@/hooks/use-page-search'
 
 export default defineComponent({
   name: 'user',
@@ -189,6 +196,18 @@ export default defineComponent({
       console.log(value)
     } */
 
+    /* const pageContentRef = ref<InstanceType<typeof PageContent>>()
+    const handleResetClick = () => {
+      pageContentRef.value?.getPageData()
+    }
+    const handleQueryClick = (queryInfo: any) => {
+      pageContentRef.value?.getPageData(queryInfo)
+    } */
+
+    // 抽取封装hooks
+    const [pageContentRef, handleResetClick, handleQueryClick] =
+      usePageSearch() as any
+
     return {
       // formItems,
       // labelWidth,
@@ -202,7 +221,10 @@ export default defineComponent({
       // showSelectColumn,
       // title
       // selectionChange,
-      contentTableConfig
+      contentTableConfig,
+      pageContentRef,
+      handleResetClick,
+      handleQueryClick
     }
   }
 })

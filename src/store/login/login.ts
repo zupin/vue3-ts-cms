@@ -6,7 +6,7 @@ import {
   requestUserMenuByRoleId
 } from '@/service/login/login'
 import localCache from '@/utils/cache'
-import { mapMenusToRoutes } from '@/utils/map-menus'
+import { mapMenusToRoutes, mapMenusToPermisions } from '@/utils/map-menus'
 import router from '@/router'
 
 import { ILoginState } from './types'
@@ -19,7 +19,8 @@ const loginModule: Module<ILoginState, IRootState> = {
     return {
       token: '',
       userInfo: {},
-      userMenus: []
+      userMenus: [],
+      permissions: []
     }
   },
   getters: {},
@@ -38,13 +39,18 @@ const loginModule: Module<ILoginState, IRootState> = {
       const routes = mapMenusToRoutes(userMenus)
       // console.log(routes) // [{path: '/main/analysis/overview', name: 'overview', children: Array(0), component: ƒ}, {path: '/main/analysis/dashboard', name: 'dashboard', children: Array(0), component: ƒ} length: 10]
 
-      console.log('changeUserMenus')
+      // console.log('changeUserMenus')
 
       // 将 routes => （添加到） router.main.children中
       // addRoute(parentName: string | symbol, route: RouteRecordRaw): () => void   parentName: 父路由记录，route 应该被添加到的位置  route: 要添加的路由记录
       routes.forEach((route) => {
         router.addRoute('main', route)
       })
+
+      // 获取用户按钮权限
+      const permissions = mapMenusToPermisions(state.userMenus)
+      // console.log(permissions)
+      state.permissions = permissions
     }
   },
   actions: {
@@ -78,6 +84,7 @@ const loginModule: Module<ILoginState, IRootState> = {
     /* ,phoneLoginAction({ commit }, payload: any) {
       console.log('执行phoneLoginAction', payload)
     } */
+    // 加载本地菜单
     loadLocalLogin({ commit }) {
       const token = localCache.getCache('token')
       if (token) {

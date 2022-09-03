@@ -40,4 +40,13 @@ export default defineComponent({
 .app {
   height: 100%;
 }
+// 去除弹出的黑色对话框
+/* .el-popper.is-dark {
+  color: transparent;
+  background: transparent !important;
+}
+.el-popper__arrow::before {
+  color: transparent;
+  background: transparent !important;
+} */
 </style>
