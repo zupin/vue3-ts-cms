@@ -9,6 +9,7 @@
           <!-- <el-col :span="8"> -->
           <el-col v-bind="colLayout">
             <el-form-item
+              v-if="!item.isHidden"
               :label="item.label"
               :rules="item.rules"
               :style="itemStyle"

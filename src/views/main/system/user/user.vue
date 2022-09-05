@@ -90,7 +90,34 @@
       ref="pageContentRef"
       :contentTableConfig="contentTableConfig"
       pageName="users"
+      @newBtnClick="handleNewData"
+      @editBtnClick="handleEditData"
     ></page-content>
+
+    <!-- <div class="page-modal">
+      <el-dialog v-model="dialogVisible" title="新建用户" width="30%" center>
+        <hy-form v-bind="modalConfig" v-model="formData"></hy-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="dialogVisible = false"
+              >确定</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
+    </div> -->
+    <!-- <page-modal
+      :defaultInfo="defaultInfo"
+      ref="pageModelRef"
+      :modalConfig="modalConfig"
+    ></page-modal> -->
+    <page-modal
+      :defaultInfo="defaultInfo"
+      ref="pageModelRef"
+      :modalConfig="modalConfigRef"
+      pageName="users"
+    ></page-modal>
   </div>
 </template>
 
@@ -98,7 +125,10 @@
 // import { defineComponent, ref } from 'vue'
 /* import { defineComponent, computed } from 'vue'
 import { useStore } from '@/store' */
-import { defineComponent } from 'vue'
+import { defineComponent, computed } from 'vue'
+import { useStore } from '@/store'
+
+// import HyForm from '@/base-ui/form'
 
 // import HyForm, { IFormItem, IForm } from '@/base-ui/form'
 // import HyForm from '@/base-ui/form'
@@ -106,11 +136,14 @@ import { defineComponent } from 'vue'
 import PageSearch from '@/components/page-search'
 // import HyTable from '@/base-ui/table'
 import PageContent from '@/components/page-content'
+import PageModal from '@/components/page-modal'
 
 import { searchFormConfig } from './config/search.config'
 import { contentTableConfig } from './config/content.config'
+import { modalConfig } from './config/modal.config'
 
 import { usePageSearch } from '@/hooks/use-page-search'
+import { usePageModal } from '@/hooks/use-page-modal'
 
 export default defineComponent({
   name: 'user',
@@ -118,7 +151,9 @@ export default defineComponent({
     // HyForm,
     PageSearch,
     // HyTable,
-    PageContent
+    PageContent,
+    // HyForm
+    PageModal
   },
   setup() {
     /* const formItems: IFormItem[] = [
@@ -208,6 +243,79 @@ export default defineComponent({
     const [pageContentRef, handleResetClick, handleQueryClick] =
       usePageSearch() as any
 
+    /* const dialogVisible = ref(true)
+    const formData = ref({}) */
+
+    /* const pageModelRef = ref<InstanceType<typeof PageModal>>()
+    const defaultInfo = ref({})
+
+    const handleNewData = () => {
+      if (pageModelRef.value) {
+        pageModelRef.value.dialogVisible = true
+      }
+    }
+    const handleEditData = (item: any) => {
+      console.log(item)
+      defaultInfo.value = { ...item }
+      if (pageModelRef.value) {
+        pageModelRef.value.dialogVisible = true
+      }
+    } */
+    // pageModel相关逻辑
+    // 1、处理密码的逻辑
+    const newCallback = () => {
+      const passwordItem = modalConfig.formItems.find(
+        (item) => item.field === 'password'
+      )
+      passwordItem!.isHidden = false
+    }
+    const editCallback = () => {
+      const passwordItem = modalConfig.formItems.find(
+        (item) => item.field === 'password'
+      )
+      passwordItem!.isHidden = true
+    }
+
+    // 2、动态添加部门和角色列表
+    const store = useStore()
+    const modalConfigRef = computed(() => {
+      const departmentItem = modalConfig.formItems.find(
+        (item) => item.field === 'departmentId'
+      )
+      departmentItem!.options = store.state.entireDepartment.map((item) => {
+        return { title: item.name, value: item.id }
+      })
+
+      const roleItem = modalConfig.formItems.find(
+        (item) => item.field === 'roleId'
+      )
+      roleItem!.options = store.state.entireRole.map((item) => {
+        return { title: item.name, value: item.id }
+      })
+      return modalConfig
+    })
+
+    // 存在问题：刷新后没数据，只能在其他页面刷新再跳转到用户页面才有数据（原因：entireDepartment和entireRole是异步请求数据）
+    // 解决方式：加入响应式中去
+    /* const departmentItem = modalConfig.formItems.find(
+      (item) => item.field === 'departmentId'
+    )
+    // console.log(departmentItem) // {field: 'departmentId', type: 'select', label: '选择部门', placeholder: '请选择部门', options: Array(0)}
+    departmentItem!.options = store.state.entireDepartment.map((item) => {
+      return { title: item.name, value: item.id }
+    })
+
+    const roleItem = modalConfig.formItems.find(
+      (item) => item.field === 'roleId'
+    )
+    roleItem!.options = store.state.entireRole.map((item) => {
+      return { title: item.name, value: item.id }
+    }) */
+
+    // 3、调用hook获取公共变量和函数
+    const [pageModelRef, defaultInfo, handleNewData, handleEditData] =
+      usePageModal(newCallback, editCallback) as any
+
     return {
       // formItems,
       // labelWidth,
@@ -224,7 +332,15 @@ export default defineComponent({
       contentTableConfig,
       pageContentRef,
       handleResetClick,
-      handleQueryClick
+      handleQueryClick,
+      // modalConfig,
+      modalConfigRef,
+      // dialogVisible,
+      // formData,
+      handleNewData,
+      handleEditData,
+      pageModelRef,
+      defaultInfo
     }
   }
 })
