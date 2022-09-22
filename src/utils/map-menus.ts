@@ -89,6 +89,25 @@ export function mapMenusToPermisions(userMenus: any[]) {
   return permissions
 }
 
+// 获取角色列表menuList的叶子节点
+export function menuMapLeafKeys(menuList: any[]) {
+  const leafKeys: number[] = []
+
+  const _recurseGetLeaf = (menuList: any[]) => {
+    for (const menu of menuList) {
+      if (menu.children) {
+        _recurseGetLeaf(menu.children)
+      } else {
+        leafKeys.push(menu.id)
+      }
+    }
+  }
+
+  _recurseGetLeaf(menuList)
+
+  return leafKeys
+}
+
 export { firstMenu }
 
 /* export function pathMapBreadcrumbs(userMenus: any[], currentPath: string) {

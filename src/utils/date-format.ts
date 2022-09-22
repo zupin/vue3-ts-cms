@@ -9,7 +9,8 @@ export function formatUtcString(
   utcString: string,
   format: string = DATE_TIME_FORMAT
 ) {
-  return dayjs.utc(utcString).format(format)
+  // utcOffset(8) 北京在东八区 需要偏移8小时
+  return dayjs.utc(utcString).utcOffset(8).format(format)
 }
 
 export function formatTimestamp(
