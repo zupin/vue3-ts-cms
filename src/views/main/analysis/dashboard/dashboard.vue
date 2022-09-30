@@ -1,68 +1,188 @@
 <template>
   <div class="dashboard">
-    <h2>
-      <div ref="divRef" :style="{ width: '600px', height: '500px' }"></div>
-    </h2>
+    <el-row :gutter="10">
+      <el-col :span="7">
+        <hy-card title="分类商品数量(饼图)">
+          <pie-echart :pieData="categoryGoodsCount"></pie-echart>
+        </hy-card>
+      </el-col>
+      <el-col :span="10">
+        <hy-card title="不同城市商品数量">
+          <map-echart :mapData="addressGoodsSale"></map-echart>
+        </hy-card>
+      </el-col>
+      <el-col :span="7">
+        <hy-card title="分类商品数量(玫瑰图)">
+          <rose-echart :roseData="categoryGoodsCount"></rose-echart>
+        </hy-card>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="10" class="content-row">
+      <el-col :span="12">
+        <hy-card title="分类商品的销量">
+          <line-echart v-bind="categoryGoodsSale"></line-echart>
+        </hy-card>
+      </el-col>
+      <el-col :span="12">
+        <hy-card title="分类商品的收藏">
+          <bar-echart v-bind="categoryGoodsFavor"></bar-echart>
+        </hy-card>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, computed } from 'vue'
+import { useStore } from '@/store'
 
-import * as echarts from 'echarts'
+import HyCard from '@/base-ui/card'
+// import BaseEchart from '@/base-ui/echart'
+import {
+  PieEchart,
+  RoseEchart,
+  LineEchart,
+  BarEchart,
+  MapEchart
+} from '@/components/page-echarts'
+
+// import { EChartsOption } from 'echarts'
 
 export default defineComponent({
   name: 'dashboard',
+  components: {
+    HyCard,
+    // BaseEchart
+    PieEchart,
+    RoseEchart,
+    LineEchart,
+    BarEchart,
+    MapEchart
+  },
   setup() {
-    const divRef = ref<HTMLElement>()
-    // const echartInstance = echarts.init(divRef.value) // 报错：divRef.value可能还没有进行初始化 值为undefined
-    onMounted(() => {
-      // 1、初始化echarts实例
-      // echarts.init(dom, theme(主题light/dark), renderer(渲染器svg/canvas))
-      const echartInstance = echarts.init(divRef.value!, 'light', {
-        renderer: 'svg'
-      })
+    const store = useStore()
+    // 请求数据
+    store.dispatch('dashboard/getDashboardDataAction')
 
-      // 2、编写配置文件
-      var option = {
-        title: {
-          text: 'ECharts 入门示例',
-          subtext: '哈哈哈哈'
-        },
-        tooltip: {
-          trigger: 'axis',
-          // 轴线
-          axisPointer: {
-            type: 'cross'
+    /* const pieOptions = {
+      title: {
+        text: 'Referer of a Website',
+        subtext: 'Fake Data',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'item'
+      },
+      legend: {
+        orient: 'vertical',
+        left: 'left'
+      },
+      series: [
+        {
+          name: 'Access From',
+          type: 'pie',
+          radius: '50%',
+          data: [
+            { value: 1048, name: 'Search Engine' },
+            { value: 735, name: 'Direct' },
+            { value: 580, name: 'Email' },
+            { value: 484, name: 'Union Ads' },
+            { value: 300, name: 'Video Ads' }
+          ],
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
           }
-        },
-        // 图例
-        legend: {
-          // legend里面的data可以自动提取（series.name）
-          // data: ['销量']
-        },
-        xAxis: {
-          data: ['衬衫', '羊毛衫', '雪纺衫', '裤子', '高跟鞋', '袜子']
-        },
-        yAxis: {},
-        series: [
-          {
-            name: '销量',
-            type: 'bar',
-            data: [5, 20, 36, 10, 10, 20]
+        }
+      ]
+    } as EChartsOption */
+
+    /* const options = {
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: [120, 200, 150, 80, 70, 110, 130],
+          type: 'bar',
+          showBackground: true,
+          backgroundStyle: {
+            color: 'rgba(180, 180, 180, 0.2)'
           }
-        ]
+        }
+      ]
+    } as EChartsOption */
+
+    // 获取数据
+    const categoryGoodsCount = computed(() => {
+      return store.state.dashboard.categoryGoodsCount.map((item: any) => {
+        return { name: item.name, value: item.goodsCount }
+      })
+    })
+
+    const categoryGoodsSale = computed(() => {
+      const xLabels: string[] = []
+      const values: any[] = []
+      const CategoryGoodsSale = store.state.dashboard.categoryGoodsSale
+
+      for (const item of CategoryGoodsSale) {
+        xLabels.push(item.name)
+        values.push(item.goodsCount)
       }
 
-      // 3、使用刚指定的配置项和数据显示图表，设置配置，并且开始绘制
-      echartInstance.setOption(option)
+      return {
+        xLabels,
+        values
+      }
+    })
+
+    const categoryGoodsFavor = computed(() => {
+      const xLabels: string[] = []
+      const values: any[] = []
+      const CategoryGoodsFavor = store.state.dashboard.categoryGoodsFavor
+
+      for (const item of CategoryGoodsFavor) {
+        xLabels.push(item.name)
+        values.push(item.goodsFavor)
+      }
+
+      return {
+        xLabels,
+        values
+      }
+    })
+
+    const addressGoodsSale = computed(() => {
+      return store.state.dashboard.addressGoodsSale.map((item: any) => {
+        return {
+          name: item.address,
+          value: item.count
+        }
+      })
     })
 
     return {
-      divRef
+      // options,
+      // pieOptions
+      categoryGoodsCount,
+      categoryGoodsSale,
+      categoryGoodsFavor,
+      addressGoodsSale
     }
   }
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.content-row {
+  margin-top: 20px;
+}
+</style>
